@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import logging
-import numpy as np
+import pandas as pd
+import os
+from joblib import dump
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -15,9 +17,9 @@ def train_model(X_train, y_train):
 
     Inputs
     ------
-    X_train : np.array
+    X_train : pd.DataFrame
         Training data
-    y_train : np.array
+    y_train : pd.DataFrame
         Labels
     Returns
     -------
@@ -32,7 +34,7 @@ def train_model(X_train, y_train):
                                 intercept_scaling=1, 
                                 l1_ratio=None, 
                                 max_iter=100,
-                                multi_class='warn', 
+                                multi_class='auto', 
                                 n_jobs=None, 
                                 penalty='l2',
                                 random_state=0, 
@@ -41,15 +43,37 @@ def train_model(X_train, y_train):
                                 verbose=0,
                                 warm_start=False
     )
-    
+    #assert isinstance(X_train, pd.DataFrame), "Features must be a pandas DataFrame"
+    #assert isinstance(y_train, pd.DataFrame), "Targets must be a pandas DataFrame"
+    pipe = make_pipeline(
+             StandardScaler(), 
+             logreg
+    )
+    # fit the logistic regression to your data
     try:
-        assert isinstance(X_train, np.ndarray), "Features must be a Numpy array"
-        assert isinstance(y_train, np.ndarray), "Targets must be a Numpy array"
-        pipe = make_pipeline(
-            StandardScaler(), logreg
-        )
-        # fit the logistic regression to your data
         pipe.fit(X_train, y_train)
-        return pipe
+    except ValueError as err:
+        logging.info(f"train_model - {err}")
+        raise Exception(f"train_model - {err}")
     except AssertionError as msg:
-        return msg
+        logging.info(f"train_model - {msg}")
+        raise Exception(msg)
+    
+    return pipe
+
+def store_model(model, model_directory, model_file):
+    '''
+    store a model in a local directory
+
+    Args:
+        model: model to be store
+        model_directory: (str) local directory to store the model
+        model_file: (str) model file name
+    '''
+    if not os.path.exists(model_directory):
+        logger.info(f"train_lg: {model_directory} not found")
+        raise FileNotFoundError(f"train_lg: {model_directory} not found")
+    
+    model_path = model_directory + "/" + model_file
+    with open(model_path, 'wb') as handle:
+        dump(model, handle)

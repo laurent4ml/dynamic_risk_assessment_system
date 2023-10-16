@@ -14,7 +14,8 @@ def split_dataset(args):
     Store the train and test datasets on local.
 
     Args:
-        - input_path (str): input file path
+        - path (str): input file path
+        - split_data_path (str): folder to store split datasets
         - input_artifact (str): Input artifact string
         - artifact_root (str): Artifact root
         - artifact_type (str): Artifact type
@@ -23,6 +24,7 @@ def split_dataset(args):
     """
     artifact = args['input_artifact']
     directory = args['path']
+    split_data_directory = args['split_data_path']
     test_size = args['test_size']
     random_state = args['random_state']
     artifact_root = args['artifact_root']
@@ -48,13 +50,11 @@ def split_dataset(args):
         # split
         artifact_name = f"{artifact_root}_{split}.csv"
 
-        local_directory = os.path.join(directory, "data_split")
+        if not os.path.exists(split_data_directory):
+            logger.info(f"split_dataset - Creating {split_data_directory}")
+            os.mkdir(split_data_directory)
 
-        if not os.path.exists(local_directory):
-            logger.info(f"split_dataset - Creating {local_directory}")
-            os.mkdir(local_directory)
-
-        path = os.path.join(local_directory, artifact_name)
+        path = os.path.join(split_data_directory, artifact_name)
         logger.info(f"split_dataset - Saving the {split} dataset to {path}")
         # Save to local filesystem
         df.to_csv(path, index=False)

@@ -163,7 +163,7 @@ def merge_multiple_dataframe(input_files, output_file, input_file_directory):
             
         logger.info(f"merge_multiple_dataframe - dropping duplicates")
         df = df.drop_duplicates()
-        logger.info(f"merge_multiple_dataframe - storre to output file")
+        logger.info(f"merge_multiple_dataframe - store to output file")
         df.to_csv(output_file)
     except AssertionError as m:
         logging.info(m)
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     input_folder_path = config['input_folder_path']
     output_folder_path = config['output_folder_path']
 
-    logger.info("list_all_files - start")
+    logger.info("ingestion - list_all_files - start")
     all_files = list_all_files(os.getcwd() + "/" + input_folder_path)
     logger.info("list_all_files - end\n")
 
