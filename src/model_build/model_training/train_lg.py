@@ -2,7 +2,7 @@
 import logging
 import pandas as pd
 import os
-from joblib import dump
+from joblib import dump, load
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -77,3 +77,28 @@ def store_model(model, model_directory, model_file):
     model_path = model_directory + "/" + model_file
     with open(model_path, 'wb') as handle:
         dump(model, handle)
+
+def get_model(model_directory, model_file_name):
+    '''
+    load a model from a local directory
+
+    Args:
+        model_file_name: (str) model file name
+        model_directory: (str) local directory to get the model from
+
+    Output
+        model: trained model
+    '''
+    if not os.path.exists(model_directory):
+        logger.info(f"train_lg: {model_directory} not found")
+        raise FileNotFoundError(f"train_lg: {model_directory} not found")
+    
+    model_file = os.path.join(model_directory, model_file_name)
+
+    if not os.path.exists(model_file):
+        logger.info(f"train_lg: {model_file} not found")
+        raise FileNotFoundError(f"train_lg: {model_file} not found")
+    
+    model = load(model_file)
+    
+    return model
