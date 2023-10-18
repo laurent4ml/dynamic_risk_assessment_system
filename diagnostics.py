@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import timeit
 import os
 import json
@@ -18,10 +17,15 @@ prod_deployment_path = os.path.join(config['prod_deployment_path'])
 test_data_path = os.path.join(config['test_data_path']) 
 output_folder_path = os.path.join(config['output_folder_path'])
 
-def model_predictions():
+def model_predictions(dataset):
     '''
     Function to get model predictions
     read the deployed model and a test dataset, calculate predictions
+
+    Input
+        dataset (DataFrame): dataset to use to get predictions
+    Output
+        predictions (list): predictions based on trained model and test data
     '''
     # trained ML model file
     logger.info("model_predictions: start")
@@ -31,18 +35,9 @@ def model_predictions():
         logger.info(f"Error: {model_file} not found")
         exit(1)
 
-    test_file = os.path.join(test_data_path, "testdata.csv")
-    if not os.path.exists(test_file):
-        logger.info(f"Error: {test_file} not found")
-        exit(1)
-
     model = train_lg.get_model(prod_deployment_path, model_file_name)
-
-    test_data = pd.read_csv(test_file)
-
-    test_data = test_data.drop(['corporation','exited'], axis=1)
-
-    predictions = model.predict(test_data)
+    
+    predictions = model.predict(dataset)
     logger.info(predictions)
     return predictions
 
@@ -81,22 +76,22 @@ def missing_data():
     Ouput
         precents (list): percentage of missing data per numerical feature
     '''
+    logger.info(f"missing data: start")
     data_file = os.path.join(output_folder_path, "finaldata.csv")
     if not os.path.exists(data_file):
         logger.info(f"Error: {data_file} not found")
         exit(1)
     
     dataset = pd.read_csv(data_file)
-
-    # stats = {}
-
-    # numerical_features = ("lastmonth_activity", "lastyear_activity", "number_of_employees")
-    # total_data = len(dataset.index)
-    # for numerical_feature in numerical_features:
-    #     logger.info(f"Total missing data for {numerical_feature}")
-    #     total_missing_data = dataset[numerical_feature].isna().sum()
-    #     stats[numerical_feature] = total_missing_data / total_data
-    stats=list(dataset.isna().sum())
+    
+    stats = {}
+    numerical_features = ("lastmonth_activity", "lastyear_activity", "number_of_employees")
+    total_data = len(dataset.index)
+    for numerical_feature in numerical_features:
+        logger.info(f"Total missing data for {numerical_feature}")
+        total_missing_data = dataset[numerical_feature].isna().sum()
+        stats[numerical_feature] = total_missing_data / total_data
+    
     return stats
 
 # Function to get timings
@@ -143,7 +138,16 @@ def write_dependencies():
 
 
 if __name__ == '__main__':
-    model_predictions()
+    test_file = os.path.join(test_data_path, "testdata.csv")
+    if not os.path.exists(test_file):
+        logger.info(f"Error: {test_file} not found")
+        exit(1)
+
+    test_data = pd.read_csv(test_file)
+
+    test_data = test_data.drop(['corporation','exited'], axis=1)
+    preds = model_predictions(test_data)
+    logger.info(preds)
     stats = dataframe_summary()
     logger.info(stats)
     percents = missing_data()
