@@ -4,7 +4,7 @@ import os
 import json
 import logging
 import subprocess
-from src.model_build.model_training import train_lg
+from src.model_build.model_prediction import predict
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
@@ -16,30 +16,6 @@ with open('config.json','r') as f:
 prod_deployment_path = os.path.join(config['prod_deployment_path']) 
 test_data_path = os.path.join(config['test_data_path']) 
 output_folder_path = os.path.join(config['output_folder_path'])
-
-def model_predictions(dataset):
-    '''
-    Function to get model predictions
-    read the deployed model and a test dataset, calculate predictions
-
-    Input
-        dataset (DataFrame): dataset to use to get predictions
-    Output
-        predictions (list): predictions based on trained model and test data
-    '''
-    # trained ML model file
-    logger.info("model_predictions: start")
-    model_file_name = "trainedmodel.pkl"
-    model_file = os.path.join(prod_deployment_path, model_file_name)
-    if not os.path.exists(model_file):
-        logger.info(f"Error: {model_file} not found")
-        exit(1)
-
-    model = train_lg.get_model(prod_deployment_path, model_file_name)
-    
-    predictions = model.predict(dataset)
-    logger.info(predictions)
-    return predictions
 
 # Function to get summary statistics
 def dataframe_summary():
@@ -144,9 +120,8 @@ if __name__ == '__main__':
         exit(1)
 
     test_data = pd.read_csv(test_file)
-
     test_data = test_data.drop(['corporation','exited'], axis=1)
-    preds = model_predictions(test_data)
+    preds = predict.get_predictions(test_data, "trainedmodel.pkl")
     logger.info(preds)
     stats = dataframe_summary()
     logger.info(stats)
@@ -157,9 +132,3 @@ if __name__ == '__main__':
     outdated_packages = outdated_packages_list()
     logger.info(outdated_packages)
     write_dependencies()
-
-
-
-
-
-    

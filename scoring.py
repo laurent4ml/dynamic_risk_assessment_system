@@ -1,8 +1,6 @@
 from src.model_build.model_evaluate import score_model
 import logging
-import pandas as pd
 import os
-import pickle
 import json
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")

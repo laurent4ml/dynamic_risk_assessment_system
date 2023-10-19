@@ -41,12 +41,7 @@ def get_f1_score(model_file, test_data_file):
     with open(model_file , 'rb') as f:
         lr_model = load(f)
 
-    # raise AssertionError(f"scored_model error loading model: {msg}")
     logger.info(f"scored_model - type of lr_model: {type(lr_model)}")
-    #logger.info(f"scored_model - lr_model.coef_: {lr_model.coef_}")
-    # logger.info(f"scored_model - len(lr_model.coef_[0]): {len(lr_model.coef_[0])}")
-
-    # assert len(lr_model.coef_[0]) == X_test.shape[1], "scored_model: Data dimension incorrect"
 
     preds = lr_model.predict(X_test)
 

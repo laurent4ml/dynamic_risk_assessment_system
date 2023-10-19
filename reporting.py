@@ -1,7 +1,6 @@
 import pandas as pd
-import numpy as np
 from sklearn import metrics
-import diagnostics
+from src.model_build.model_prediction import predict
 import matplotlib.pyplot as plt
 import seaborn as sns
 import json
@@ -46,7 +45,7 @@ if __name__ == '__main__':
     test_data = pd.read_csv(test_file)
     y_test = test_data['exited']
     test_data = test_data.drop(['corporation','exited'], axis=1)
-    preds = diagnostics.model_predictions(test_data)
+    preds = predict.get_predictions(test_data)
     logger.info(preds)
 
     score_model(preds, y_test)

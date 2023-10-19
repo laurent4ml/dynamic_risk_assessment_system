@@ -1,4 +1,3 @@
-from flask import Flask, session, jsonify, request
 from src.model_build.data_preparation import prepare
 from src.model_build.data_split import train_test_split
 from src.model_build.model_training import train_lg
@@ -11,6 +10,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
 if __name__ == '__main__':
+
+    model_file = 'trainedmodel.pkl'
 
     # Load config.json and get input and output paths
     with open('config.json','r') as f:
@@ -73,7 +74,6 @@ if __name__ == '__main__':
     try:
         model = train_lg.train_model(x_train, y_train)
         # write trained model to a file called trainedmodel.pkl
-        model_file = 'trainedmodel.pkl'
         model_directory = os.getcwd() + "/" + output_model_path
         logger.info(f"Saving Model to {model_file}")
         train_lg.store_model(model, model_directory, model_file)

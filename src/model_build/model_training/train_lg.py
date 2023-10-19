@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import logging
-import pandas as pd
 import os
 from joblib import dump, load
 from sklearn.linear_model import LogisticRegression
@@ -46,7 +45,7 @@ def train_model(X_train, y_train):
     #assert isinstance(X_train, pd.DataFrame), "Features must be a pandas DataFrame"
     #assert isinstance(y_train, pd.DataFrame), "Targets must be a pandas DataFrame"
     pipe = make_pipeline(
-             StandardScaler(), 
+             StandardScaler(),
              logreg
     )
     # fit the logistic regression to your data
