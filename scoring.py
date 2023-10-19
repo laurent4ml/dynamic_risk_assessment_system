@@ -36,4 +36,5 @@ if __name__ == '__main__':
 
     f1_score_file = os.path.join(output_folder_path, "latestscore.txt")
     with open(f1_score_file, "w") as f:
-        f.write(f1score) 
+        f.write(f1score)
+         
