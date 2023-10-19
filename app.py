@@ -1,8 +1,9 @@
-from flask import Flask, session, jsonify, request
+from flask import Flask, jsonify, request
 import logging
 import pandas as pd
 from src.model_build.model_prediction import predict
 from src.model_build.model_evaluate import score_model
+from src.model_build.data_eda import eda
 import json
 import os
 
@@ -13,8 +14,10 @@ logger = logging.getLogger()
 app = Flask(__name__)
 
 with open('config.json','r') as f:
-    config = json.load(f) 
+    config = json.load(f)
 
+test_folder_path = config['test_data_path']
+model_path = config['output_model_path']
 dataset_csv_path = os.path.join(config['output_folder_path']) 
 
 prediction_model = None
@@ -54,13 +57,6 @@ def scoring():
     test_data_file_name = "testdata.csv"
     model_file_name = "trainedmodel.pkl"
 
-    # Load config.json and get input and output paths
-    with open('config.json','r') as f:
-        config = json.load(f) 
-
-    test_folder_path = config['test_data_path']
-    model_path = config['output_model_path']
-
     # define test data file
     test_data_file = os.path.join(os.getcwd(),test_folder_path,test_data_file_name)
     if not os.path.exists(test_data_file):
@@ -83,9 +79,19 @@ def scoring():
 
 # Summary Statistics Endpoint
 @app.route("/summarystats", methods=['GET','OPTIONS'])
-def stats():        
-    # check means, medians, and modes for each column
-    return True # return a list of all calculated summary statistics
+def stats():
+    stats = []
+    
+    data_file = os.path.join(dataset_csv_path, "finaldata.csv")        
+
+    try:
+        stats = eda.dataframe_summary(data_file)
+        logger.info(stats)
+    except Exception as m:
+        logger.info(m)
+        return jsonify({"error": m})
+
+    return jsonify({"Stats": stats})
 
 # Diagnostics Endpoint
 @app.route("/diagnostics", methods=['GET','OPTIONS'])

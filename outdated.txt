@@ -4,7 +4,7 @@ accelerate               0.20.3    0.23.0       wheel
 aiohttp                  3.8.4     3.8.6        wheel
 alembic                  1.11.1    1.12.0       wheel
 anyio                    3.6.2     4.0.0        wheel
-argilla                  1.5.1     1.16.0       wheel
+argilla                  1.5.1     1.17.0       wheel
 argon2-cffi              21.3.0    23.1.0       wheel
 arrow                    1.2.3     1.3.0        wheel
 astroid                  2.15.5    3.0.1        wheel
@@ -25,7 +25,7 @@ click                    8.1.3     8.1.7        wheel
 clickhouse-connect       0.5.18    0.6.16       wheel
 cloudpickle              2.2.1     3.0.0        wheel
 cmake                    3.26.4    3.27.7       wheel
-cohere                   4.11.2    4.30         wheel
+cohere                   4.11.2    4.31         wheel
 comm                     0.1.3     0.1.4        wheel
 contourpy                1.1.0     1.1.1        wheel
 courlan                  0.9.3     0.9.4        wheel
@@ -84,7 +84,7 @@ kor                      0.6.1     1.0.0        wheel
 langchain                0.0.209   0.0.317      wheel
 langchainplus-sdk        0.0.17    0.0.20       wheel
 lit                      16.0.6    17.0.3       sdist
-llama-index              0.6.31    0.8.46       wheel
+llama-index              0.6.31    0.8.47       wheel
 llvmlite                 0.40.1    0.41.1       wheel
 loguru                   0.7.0     0.7.2        wheel
 lxml                     4.9.2     4.9.3        wheel

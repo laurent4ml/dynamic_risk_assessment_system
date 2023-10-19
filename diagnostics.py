@@ -5,6 +5,7 @@ import json
 import logging
 import subprocess
 from src.model_build.model_prediction import predict
+from src.model_build.data_eda import eda
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
@@ -16,34 +17,6 @@ with open('config.json','r') as f:
 prod_deployment_path = os.path.join(config['prod_deployment_path']) 
 test_data_path = os.path.join(config['test_data_path']) 
 output_folder_path = os.path.join(config['output_folder_path'])
-
-# Function to get summary statistics
-def dataframe_summary():
-
-    data_file = os.path.join(output_folder_path, "finaldata.csv")
-    if not os.path.exists(data_file):
-        logger.info(f"Error: {data_file} not found")
-        exit(1)
-    
-    dataset = pd.read_csv(data_file)
-
-    stats = {}
-
-    numerical_features = ("lastmonth_activity", "lastyear_activity", "number_of_employees")
-    for numerical_feature in numerical_features:
-        stat = {}
-        logger.info(f"Log descriptive stats for {numerical_feature}")
-        mean = dataset[numerical_feature].mean()
-        stat['mean'] = mean
-        logger.info(f"mean for {numerical_feature}: {mean}")
-        stddev = dataset[numerical_feature].std()
-        stat['std'] = stddev
-        logger.info(f"stddev for {numerical_feature}: {stddev}")
-        median = dataset[numerical_feature].median()
-        stat['median'] = median
-        logger.info(f"median for {numerical_feature}: {median}")
-        stats[numerical_feature] = stat
-    return stats
 
 def missing_data():
     '''
@@ -123,8 +96,14 @@ if __name__ == '__main__':
     test_data = test_data.drop(['corporation','exited'], axis=1)
     preds = predict.get_predictions(test_data, "trainedmodel.pkl")
     logger.info(preds)
-    stats = dataframe_summary()
-    logger.info(stats)
+
+    data_file = os.path.join(output_folder_path, "finaldata.csv")         
+    try:
+        stats = eda.dataframe_summary(data_file)
+        logger.info(stats)
+    except Exception as m:
+        logger.info(m)
+    
     percents = missing_data()
     logger.info(percents)
     timings = execution_time()
