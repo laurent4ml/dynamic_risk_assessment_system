@@ -22,14 +22,15 @@ if __name__ == '__main__':
         logger.info("Error: {test_data_file} not found")
         exit(1)
 
+    model_file_name = "trainedmodel.pkl"
     # define trained ML model file
-    model_file = os.getcwd() + "/" + model_path + "/trainedmodel.pkl"
+    model_file = os.path.join(os.getcwd(),model_path,model_file_name)
     if not os.path.exists(model_file):
         logger.info("Error: {model_file} not found")
         exit(1)
 
     try:
-        f1score = score_model.get_f1_score(model_file, test_data_file)
+        f1score = score_model.get_f1_score(model_file_name, model_path, test_data_file)
     except Exception as m:
         logger.info(f"Error: score_model: {m}")
         exit(1)

@@ -32,13 +32,22 @@ def predictions():
     Output
         predictions (list): predictions from dataset
     '''
+    logger.info(f"predictions: start")
     model_file_name = "trainedmodel.pkl"
     data_file_name = "finaldata.csv"
+    data_file_path = dataset_csv_path
+    logger.info(f"predictions: model name {model_file_name}")
 
     if request.method == 'POST':
-        data_file_name = request.form['file']
+        data_file_name = request.form.get('file_name', 'finaldata.csv')
+        data_file_path = request.form.get('file_path', dataset_csv_path)
 
-    data_file = os.path.join(os.getcwd(), dataset_csv_path, data_file_name)
+    if not data_file_path or not data_file_name or not len(data_file_path) or not len(data_file_name):
+        return jsonify({'input error': 'no file or path'})
+
+    logger.info(f"predictions: data_file_path = {data_file_path}")
+    data_file = os.path.join(data_file_path, data_file_name)
+    logger.info(f"predictions: file {data_file}")
 
     if not os.path.exists(data_file):
         logger.info(f"predictions: {data_file} not found")
@@ -57,7 +66,7 @@ def predictions():
 @app.route("/scoring", methods=['GET','OPTIONS'])
 def scoring():    
     test_data_file_name = "testdata.csv"
-    model_file_name = "trainedmodel.pkl"
+    model_file_name = "trainedmodel_final.pkl"
 
     # define test data file
     test_data_file = os.path.join(os.getcwd(),test_folder_path,test_data_file_name)
@@ -72,7 +81,7 @@ def scoring():
         return jsonify({"error": f"'{model_file_name}' file not found"})
 
     try:
-        f1score = score_model.get_f1_score(model_file, test_data_file)
+        f1score = score_model.get_f1_score(model_file_name, model_path, test_data_file)
     except Exception as m:
         logger.info(f"Error: score_model: {m}")
         return jsonify({"error": m})
@@ -104,6 +113,7 @@ def diagnostics():
         diagnostics['timings'] = timings
     except Exception as t:
         logger.info(t)
+        return jsonify({"error": t})
 
     data_file = os.path.join(dataset_csv_path, "finaldata.csv")        
 
@@ -113,6 +123,7 @@ def diagnostics():
         diagnostics['missing_data'] = percents
     except Exception as m:
         logger.info(m)
+        return jsonify({"error": m})
 
     try:
         pckgs = outdated_packages.outdated_packages_list()
@@ -120,6 +131,7 @@ def diagnostics():
         diagnostics['outdated_packages'] = pckgs[2:]
     except Exception as m:
         logger.info(m)
+        return jsonify({"error": m})
 
     return jsonify({"diagnostics": diagnostics})
 

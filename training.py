@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     # Load config.json and get input and output paths
     with open('config.json','r') as f:
-        config = json.load(f) 
+        config = json.load(f)
 
     folder_path = config['output_folder_path']
     output_model_path = config['output_model_path']
