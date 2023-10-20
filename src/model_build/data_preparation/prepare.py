@@ -25,12 +25,14 @@ def clean_data(args):
     logger.info(f"clean_data -  artifact: {artifact_path}")
 
     # Read in finaldata.csv using the pandas module.
-    data = pd.read_csv(os.getcwd() + "/" + artifact_path, low_memory=False)
+    data_path = os.path.join(os.getcwd(), artifact_path)
+    data = pd.read_csv(data_path, index_col=False, low_memory=False)
     
     assert isinstance(data, pd.DataFrame), "prepare - data not a pandas dataframe"
 
     logger.info(f"clean_data - data shape: {data.shape}")
-    data = data.drop(['corporation'], axis=1)
+
+    data = data[['lastmonth_activity','lastyear_activity','number_of_employees','exited']]
     logger.info(f"clean_data - data shape after drop column: {data.shape}")
     data = data.drop_duplicates()
     logger.info(f"clean_data - data shape after drop duplicates: {data.shape}")

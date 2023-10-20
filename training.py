@@ -56,10 +56,7 @@ if __name__ == '__main__':
 
     # load training data
     train_df = pd.read_csv(train_data_file)
-    logger.info(f"training - train_df shape: {train_df.shape}")
-    # simple data transformation
-    logger.info(train_df.columns)
-    train_df = train_df.drop(['Unnamed: 0'],axis=1)
+
     logger.info(train_df.columns)
     logger.info(f"training - train_df type: {type(train_df)}")
     logger.info(f"training - train df shape: {train_df.shape}")

@@ -34,9 +34,9 @@ def get_f1_score(model_file_name, model_path, test_data_file):
 
     y_test = test_data['exited']
 
-    model_file = os.path.join(os.getcwd(),model_path,model_file_name)
+    model_file = os.path.join(os.getcwd(), model_path, model_file_name)
     if not os.path.exists(model_file):
-        logger.info("scored_model: {model_file} not found")
+        logger.info(f"scored_model: {model_file} not found")
         raise FileNotFoundError("scored_model: {model_file} not found")
     
     logger.info(f"scored_model - loading model file: {model_file}")

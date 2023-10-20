@@ -23,13 +23,13 @@ if __name__ == '__main__':
         exit(1)
 
     # ingestedfiles file
-    ingestedfiles_file = os.getcwd() + "/" + output_folder_path + "/ingestedfiles.txt"
+    ingestedfiles_file = os.path.join(os.getcwd(), output_folder_path, "ingestedfiles.txt")
     if not os.path.exists(ingestedfiles_file):
         logger.info("Error: {ingestedfiles_file} not found")
         exit(1)
 
     # trained ML model file
-    model_file = os.getcwd() + "/" + model_path + "/trainedmodel.pkl"
+    model_file = os.path.join(os.getcwd(), model_path, "trainedmodel.pkl")
     if not os.path.exists(model_file):
         logger.info("Error: {model_file} not found")
         exit(1)

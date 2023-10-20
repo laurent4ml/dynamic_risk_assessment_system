@@ -27,16 +27,17 @@ def get_predictions(dataset, model_file_name = "trainedmodel.pkl"):
         prod_deployment_path = os.path.join(os.getcwd(), config['prod_deployment_path']) 
         model = train_lg.get_model(prod_deployment_path, model_file_name)
 
-        if 'exited' in dataset:
-            logger.info("model_predictions: dropping column 'exited'")
-            dataset = dataset.drop(['exited'], axis=1)
-        if 'corporation' in dataset:
-            logger.info("model_predictions: dropping column 'corporation'")
-            dataset = dataset.drop(['corporation'], axis=1)
+        # if 'exited' in dataset:
+        #     logger.info("model_predictions: dropping column 'exited'")
+        #     dataset = dataset.drop(['exited'], axis=1)
+        # if 'corporation' in dataset:
+        #     logger.info("model_predictions: dropping column 'corporation'")
+        #     dataset = dataset.drop(['corporation'], axis=1)
+
+        dataset = dataset[['lastmonth_activity','lastyear_activity','number_of_employees']]
         logger.info(f"dataset shape: {dataset.shape}")
-        logger.info(f"dataset columns: {dataset.columns}")
-        if len(dataset.columns) > 3:
-            dataset = dataset.drop(['Unnamed: 0'], axis=1)
+        logger.info(f"dataset columns: {dataset.columns}")   
+
         try:
             predictions = model.predict(dataset.values)
             logger.info(predictions)

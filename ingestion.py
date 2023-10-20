@@ -71,7 +71,7 @@ def filter_new_files(ingested_file_name, all_files_in_directory):
     filtered_list = list()
 
     try:
-        assert isinstance(all_files_in_directory,list), "all_files_in_directory not a list"
+        assert isinstance(all_files_in_directory, list), "all_files_in_directory not a list"
     except AssertionError as m:
         logger.info(m)
         return filtered_list
@@ -88,7 +88,7 @@ def filter_new_files(ingested_file_name, all_files_in_directory):
         else:
             for file in all_files_in_directory:
                 if condition(file, lines):
-                    filtered_list = filtered_list.append(file)
+                    filtered_list.append(file)
 
     logger.info(f"filter_new_files - filtered files: {str(filtered_list)}")
     return filtered_list
@@ -152,12 +152,17 @@ def merge_multiple_dataframe(input_files, output_file, input_file_directory):
                 logger.info(f"{output_file} is empty and has been skipped.")
 
         length = len(df)
-        logger.info(f"merge_multiple_dataframe - length: {length}")
+        logger.info(f"merge_multiple_dataframe - length df: {length}")
         for input_file in input_files:
-            data = pd.read_csv(os.getcwd() + "/" + input_file_directory + "/" + input_file)
-            logger.info(f"merge_multiple_dataframe - added {len(data)} rows")
+            input_path = os.path.join(os.getcwd(), input_file_directory, input_file)
+            data = pd.read_csv(input_path)
+            logger.info(f"merge_multiple_dataframe - adding {len(data)} rows")
             if length:
-                df.merge(df, data)
+                try:
+                    df.append(data)
+                except ValueError as e:
+                    logger.info(e)
+                    raise ValueError(f"Error merging data: {e}")
             else:
                 df = data
             

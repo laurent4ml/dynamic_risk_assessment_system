@@ -1,5 +1,4 @@
-Unnamed: 0,lastmonth_activity,lastyear_activity,number_of_employees,exited
-0,78,1024,12,1
-5,929,1992,1,0
-11,6,88,90,1
-1,14,2145,20,0
+lastmonth_activity,lastyear_activity,number_of_employees,exited
+2,1,1359,0
+45,0,99,1
+98765,7,655,0
