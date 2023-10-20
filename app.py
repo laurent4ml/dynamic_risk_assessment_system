@@ -3,7 +3,9 @@ import logging
 import pandas as pd
 from src.model_build.model_prediction import predict
 from src.model_build.model_evaluate import score_model
-from src.model_build.data_eda import eda
+from src.model_build.data_eda import eda, missing_data
+from src.model_build.model_timing import timing
+from src.diagnostics.dependencies import outdated_packages
 import json
 import os
 
@@ -81,7 +83,6 @@ def scoring():
 @app.route("/summarystats", methods=['GET','OPTIONS'])
 def stats():
     stats = []
-    
     data_file = os.path.join(dataset_csv_path, "finaldata.csv")        
 
     try:
@@ -93,11 +94,34 @@ def stats():
 
     return jsonify({"Stats": stats})
 
-# Diagnostics Endpoint
+
 @app.route("/diagnostics", methods=['GET','OPTIONS'])
-def diagnostics():        
-    # check timing and percent NA values
-    return True # add return value for all diagnostics
+def diagnostics():
+    diagnostics = {}       
+    try:
+        timings = timing.execution_time()
+        logger.info(timings)
+        diagnostics['timings'] = timings
+    except Exception as t:
+        logger.info(t)
+
+    data_file = os.path.join(dataset_csv_path, "finaldata.csv")        
+
+    try:
+        percents = missing_data.get_missing_data(data_file)
+        logger.info(percents)
+        diagnostics['missing_data'] = percents
+    except Exception as m:
+        logger.info(m)
+
+    try:
+        pckgs = outdated_packages.outdated_packages_list()
+        logger.info(pckgs)
+        diagnostics['outdated_packages'] = pckgs[2:]
+    except Exception as m:
+        logger.info(m)
+
+    return jsonify({"diagnostics": diagnostics})
 
 if __name__ == "__main__": 
     app.run(host='0.0.0.0', port=8000, debug=True, threaded=True)
